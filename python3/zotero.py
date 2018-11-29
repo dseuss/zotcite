@@ -8,6 +8,10 @@ import sqlite3
 # written by Rafael Schouten: https://github.com/rafaqz/citation.vim
 # Code and/or ideas were also adapted from zotxt, pypandoc, and pandocfilters.
 
+
+SPECIAL_CHAR = ':'
+
+
 class ZoteroEntries:
     """ Create an object storing all references from ~/Zotero/zotero.sqlite """
 
@@ -463,9 +467,9 @@ class ZoteroEntries:
     @classmethod
     def _get_compl_line(cls, e):
         if e['alastnm'] == '':
-            line = e['zotkey'] + '#' + e['citekey'] + '\x09 \x09(' + e['year'] + ') ' + e['title']
+            line = e['zotkey'] + SPECIAL_CHAR + e['citekey'] + '\x09 \x09(' + e['year'] + ') ' + e['title']
         else:
-            line = e['zotkey'] + '#' + e['citekey'] + '\x09' + e['alastnm'] + '\x09(' + e['year'] + ') ' + e['title']
+            line = e['zotkey'] + SPECIAL_CHAR + e['citekey'] + '\x09' + e['alastnm'] + '\x09(' + e['year'] + ') ' + e['title']
         return line
 
     def GetMatch(self, ptrn, d):
@@ -558,7 +562,7 @@ class ZoteroEntries:
         ref = ''
         for e in self._e:
             for k in keys:
-                zotkey = re.sub('#.*', '', k)
+                zotkey = re.sub(f'{SPECIAL_CHAR}.*', '', k)
                 if zotkey == self._e[e]['zotkey']:
                     ref += self._get_yaml_ref(self._e[e], k)
         if ref != '':
@@ -621,7 +625,7 @@ class ZoteroEntries:
         ref = ''
         for e in self._e:
             for k in keys:
-                zotkey = re.sub('#.*', '', k)
+                zotkey = re.sub(f'{SPECIAL_CHAR}.*', '', k)
                 if zotkey == self._e[e]['zotkey']:
                     ref += self._get_bib_ref(self._e[e], k)
         return ref
